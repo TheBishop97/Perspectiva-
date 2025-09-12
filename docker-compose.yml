@@ -1,16 +1,26 @@
 services:
-  perspectiva:
-    build: .
-    container_name: perspectiva
+  backend:
+    build:
+    container_name: perspectiva_backend
     restart: unless-stopped
     ports:
-      - "80:8000"
+      - "8000:8000"
     volumes:
       - perspectiva_data:/data
     environment:
-      # These override defaults in .env.example if needed
       FETCH_INTERVAL_SECONDS: 300
       LOG_LEVEL: INFO
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: perspectiva_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
 volumes:
   perspectiva_data:
