@@ -4,7 +4,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential gcc && rm -rf /var/lib/apt/lists/*
+    build-essential gcc && \
+    update-ca-certificates && \ 
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
