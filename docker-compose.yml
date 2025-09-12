@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  perspectiva:
+    build: .
+    container_name: perspectiva
+    restart: unless-stopped
+    ports:
+      - "80:8000"
+    volumes:
+      - perspectiva_data:/data
+    environment:
+      # These override defaults in .env.example if needed
+      FETCH_INTERVAL_SECONDS: 300
+      LOG_LEVEL: INFO
+
+volumes:
+  perspectiva_data:
