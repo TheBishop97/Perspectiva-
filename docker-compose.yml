@@ -1,6 +1,6 @@
 services:
   backend:
-    build:
+    build: .
     container_name: perspectiva_backend
     restart: unless-stopped
     ports:
