@@ -1,27 +1,21 @@
 # ---------- Builder Stage ----------
-FROM node:20-bullseye AS builder
+FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and lock file
 COPY package*.json ./
+RUN npm install --legacy-peer-deps
 
-# Install dependencies (clean install)
-RUN npm ci --legacy-peer-deps
-
-# Copy rest of the source code
 COPY . .
 
-# Build Next.js app
-RUN npm run build
+# Disable SWC (use Babel instead, portable but slower)
+RUN npm run build --no-swc
 
 # ---------- Runtime Stage ----------
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-# Copy only necessary files from builder
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
