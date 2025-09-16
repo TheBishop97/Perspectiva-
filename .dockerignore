@@ -1,0 +1,35 @@
+# Python cache / build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual environments
+.venv
+venv
+ENV/
+env/
+
+# Logs
+*.log
+
+# Build/test artifacts
+.coverage
+.pytest_cache
+.mypy_cache
+*.egg-info
+.eggs
+
+# Environment variables (don’t bake secrets)
+.env
+.env.*
+!env.example
+
+# IDE / OS files
+.DS_Store
+.vscode
+.idea
+*.swp
+*.swo
