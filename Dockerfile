@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 COPY --from=builder /venv /venv
 COPY app/ app/
-COPY .env.example requirements.txt ./
+COPY requirements.txt ./
 
 RUN mkdir -p /data
 EXPOSE 8000
