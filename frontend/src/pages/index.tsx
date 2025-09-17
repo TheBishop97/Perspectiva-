@@ -8,21 +8,27 @@ type Article = {
 
 export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchArticles() {
       try {
         const res = await fetch("http://backend:8000/articles"); 
-        // 👆 Notice we call `backend`, the Docker service name in docker-compose.yml
         if (!res.ok) throw new Error("Failed to fetch articles");
         const data = await res.json();
         setArticles(data);
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     }
     fetchArticles();
   }, []);
+
+  if (loading) return <p className="text-gray-400">Loading articles...</p>;
+  if (error) return <p className="text-red-400">Error: {error}</p>;
 
   return (
     <main className="min-h-screen bg-gray-900 text-white p-6">
