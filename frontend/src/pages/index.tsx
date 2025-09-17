@@ -1,66 +1,47 @@
 import { useEffect, useState } from "react";
 
-// ✅ Define the shape of an Article
-interface Article {
+type Article = {
   id: number;
   title: string;
   url: string;
-}
+};
 
-// ✅ Home page component
 export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
 
-  // Mock fetch (later you can connect to FastAPI)
   useEffect(() => {
-    // Pretend this comes from your backend API
-    const mockArticles: Article[] = [
-      { id: 1, title: "Welcome to Perspectiva!", url: "https://example.com/1" },
-      { id: 2, title: "Next.js Static Export Works!", url: "https://example.com/2" },
-      { id: 3, title: "FastAPI + Next.js = 🚀", url: "https://example.com/3" },
-    ];
-    setArticles(mockArticles);
+    async function fetchArticles() {
+      try {
+        const res = await fetch("http://backend:8000/articles"); 
+        // 👆 Notice we call `backend`, the Docker service name in docker-compose.yml
+        if (!res.ok) throw new Error("Failed to fetch articles");
+        const data = await res.json();
+        setArticles(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchArticles();
   }, []);
 
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "1rem" }}>
-        Perspectiva News
-      </h1>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "1rem",
-        }}
-      >
+    <main className="min-h-screen bg-gray-900 text-white p-6">
+      <h1 className="text-3xl font-bold mb-6">Perspectiva News</h1>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {articles.map((a) => (
           <article
             key={a.id}
-            style={{
-              border: "1px solid #ddd",
-              padding: "1rem",
-              borderRadius: "8px",
-              backgroundColor: "#fafafa",
-            }}
+            className="bg-gray-800 p-4 rounded-2xl shadow-md hover:scale-105 transition-transform duration-200"
           >
             <a
               href={a.url}
               target="_blank"
               rel="noreferrer"
-              style={{
-                color: "#0366d6",
-                fontWeight: 600,
-                display: "block",
-                marginBottom: "0.5rem",
-              }}
+              className="text-blue-400 font-semibold hover:underline"
             >
               {a.title}
             </a>
-            <p style={{ fontSize: "0.9rem", color: "#555" }}>
-              Article ID: {a.id}
-            </p>
+            <p className="text-sm text-gray-400 mt-2">Article ID: {a.id}</p>
           </article>
         ))}
       </div>
