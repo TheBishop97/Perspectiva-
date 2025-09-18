@@ -1,40 +1,49 @@
+"use client";
+
 import { useEffect, useState } from "react";
 
 interface Article {
   id: number;
   title: string;
   url: string;
+  summary: string;
+  sentiment: string;
 }
 
 export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch("http://backend:8000/articles"); // container-to-container
-        const data = await res.json();
-        setArticles(data);
-      } catch (err) {
-        console.error("Failed to fetch articles:", err);
-      }
-    }
-    fetchData();
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    console.log("Fetching from:", apiUrl);
+
+    fetch(`${apiUrl}/articles`)
+      .then((res) => res.json())
+      .then((data) => setArticles(data))
+      .catch((err) => console.error("Error fetching articles:", err));
   }, []);
 
   return (
-    <main style={{ padding: 20, fontFamily: "sans-serif" }}>
-      <h1 style={{ fontSize: 32, fontWeight: "bold" }}>Perspectiva News</h1>
-      <div style={{ display: "grid", gap: 16, marginTop: 20 }}>
-        {articles.map((a) => (
-          <article key={a.id} style={{ border: "1px solid #ddd", padding: 12, borderRadius: 8 }}>
-            <a href={a.url} target="_blank" rel="noreferrer" style={{ color: "#0366d6", fontWeight: 600 }}>
-              {a.title}
+    <main className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Latest Articles</h1>
+      <ul className="space-y-4">
+        {articles.map((article) => (
+          <li key={article.id} className="p-4 border rounded-lg shadow">
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xl font-semibold text-blue-600 hover:underline"
+            >
+              {article.title}
             </a>
-            <p>Article ID: {a.id}</p>
-          </article>
+            <p className="text-gray-600">{article.summary}</p>
+            <span className="text-sm text-gray-500">
+              Sentiment: {article.sentiment}
+            </span>
+          </li>
         ))}
-      </div>
+      </ul>
     </main>
   );
 }

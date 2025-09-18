@@ -1,15 +1,22 @@
+version: "3.9"
+
 services:
   backend:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: perspectiva_backend
     restart: unless-stopped
     ports:
       - "8000:8000"
-    volumes:
-      - perspectiva_data:/data
-    environment:
-      FETCH_INTERVAL_SECONDS: 300
-      LOG_LEVEL: INFO
+    networks:
+      - perspectiva_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/articles"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   frontend:
     build:
@@ -18,12 +25,15 @@ services:
     container_name: perspectiva_frontend
     restart: unless-stopped
     ports:
-      - "8080:3000"  # Changed from 3000:3000
-    environment:
-      - HOSTNAME=0.0.0.0
-      - PORT=3000
+      - "8080:3000"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    env_file:
+      - ./frontend/.env.docker
+    networks:
+      - perspectiva_net
 
-volumes:
-  perspectiva_data:
+networks:
+  perspectiva_net:
+    driver: bridge
