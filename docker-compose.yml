@@ -18,7 +18,7 @@ services:
     container_name: perspectiva_frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "8080:3000"  # Changed from 3000:3000
     environment:
       - HOSTNAME=0.0.0.0
       - PORT=3000
